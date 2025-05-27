@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import {v4 as UUIDv4} from 'uuid'
 
+const rooms : Record<string , string[]>={};
 
 const roomHandler=(socket:Socket)=>{
 
@@ -9,14 +10,25 @@ const roomHandler=(socket:Socket)=>{
         socket.join(roomId);
         console.log("new room is created",roomId);
         socket.emit("room-created",{roomId});
+        rooms[roomId]=[];
     }
 
-    const joinedRoom = ({roomId}:{roomId:string})=>{
-        console.log("New user joined a room",roomId);
+    const joinedRoom = ({roomId , peerId}:{roomId:string ,peerId:string})=>{
+       if(rooms[roomId]){
+         console.log("New user joined a room",roomId ,"with peerId",peerId);
+         rooms[roomId].push(peerId);
+         socket.join(roomId);
+
+        socket.emit("get-users",{
+            roomId,
+            participants:rooms[roomId]
+        })
+       }
     }
 
     socket.on("create-room",createRoom);
     socket.on("joined-room",joinedRoom);
+
 }
 
 
