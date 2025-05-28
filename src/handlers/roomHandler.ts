@@ -23,11 +23,16 @@ const roomHandler=(socket:Socket)=>{
             roomId,
             participants:rooms[roomId]
         })
+
+        socket.on("ready",()=>{
+            socket.to(roomId).emit("user-joined",{peerId});
+        })
        }
     }
 
     socket.on("create-room",createRoom);
     socket.on("joined-room",joinedRoom);
+
 
 }
 
