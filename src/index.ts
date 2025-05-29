@@ -18,15 +18,21 @@ const io = new Server(server , {
     }
 });
 
+
+
 io.on("connection",(socket)=>{
     console.log("new user is connected");
 
     roomHandler(socket);
 
+
     socket.on("disconnect",()=>{
-        console.log("user disconnected");
+
+        console.log("user disconnected having socket id =>",socket.id);
+
     })
 })
+
 server.listen(PORT,()=>{
     console.log(`server started at ${PORT}`);
 })
