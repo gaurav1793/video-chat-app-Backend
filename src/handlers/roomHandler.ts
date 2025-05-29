@@ -15,6 +15,7 @@ const roomHandler=(socket:Socket)=>{
 
     const joinedRoom = ({roomId , peerId}:{roomId:string ,peerId:string})=>{
        if(rooms[roomId]){
+        console.log("hello",peerId);
          console.log("New user joined a room",roomId ,"with peerId",peerId);
          rooms[roomId].push(peerId);
          socket.join(roomId);
@@ -25,10 +26,20 @@ const roomHandler=(socket:Socket)=>{
         })
 
         socket.on("ready",()=>{
+            console.log("emired ready");
             socket.to(roomId).emit("user-joined",{peerId});
         })
        }
     }
+
+    socket.on("user-leave",({peerId ,roomId})=>{
+        console.log("call end",peerId)
+        socket.to(roomId).emit("call-end",{
+            peerId
+        })
+        console.log("disconneting guys");
+        socket.emit("clear-my-peers")
+    })
 
     socket.on("create-room",createRoom);
     socket.on("joined-room",joinedRoom);
